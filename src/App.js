@@ -1,11 +1,11 @@
-import React, { useSate, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'reactstrap';
-import Modal from './components/Modal';
-import Table from '/components/Table';
+import ModalForm from './components/ModalForm';
+import DataTable from './components/DataTable';
 import { CSVLink } from 'react-csv';
 
-function App() {
-  const [items, setItems] = useSate([]);
+const App = () => {
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
     const getItems = async () => {
@@ -13,6 +13,7 @@ function App() {
         const response = await fetch('http://localhost:3000/crud');
         const json = await response.json();
         setItems(json);
+        console.log(json);
       } catch (error) {
         console.log(error);
       }
@@ -21,7 +22,7 @@ function App() {
   }, []);
 
   const addItemToState = (item) => {
-    setItems((prevState) => [...prevState.items, item]);
+    setItems([item, ...items]);
   };
 
   const updateState = (item) => {
@@ -51,7 +52,7 @@ function App() {
       </Row>
       <Row>
         <Col>
-          <Table
+          <DataTable
             items={items}
             updateState={updateState}
             deleteItemFromState={deleteItemFromState}
@@ -60,20 +61,11 @@ function App() {
       </Row>
       <Row>
         <Col>
-          <CSVLink
-            filename={'db.csv'}
-            color="primary"
-            style={{ float: 'left', marginRight: '10px' }}
-            className="btn btn-primary"
-            data={items}
-          >
-            Download CSV
-          </CSVLink>
-          <Modal buttonLabel="Add Item" addItemToState={addItemToState} />
+          <ModalForm buttonLabel="Add Item" addItemToState={addItemToState} />
         </Col>
       </Row>
     </Container>
   );
-}
+};
 
 export default App;
